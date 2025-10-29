@@ -6,3 +6,4 @@ XdfStreamer/XdfStreamer.pro.user*
 /.vs
 CMakeSettings.json
 /out
+XdfStreamer/build/Unnamed-Debug

@@ -26,12 +26,16 @@ If you are debugging or not intending to install to the system, then you need to
 
 ## Pho Build 2025-09-09
 
-```
+```ps1
+# cd "C:/Users/pho/Desktop/LSL Tools/Pho LSL Repos/LSL_REPOS/App-XDFStreamer"
+cd "C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer"
+
 mkdir EXTERNAL
 cd .\EXTERNAL\
 
 git clone --recursive https://github.com/xdf-modules/libxdf
-cmake -S . -B build -A x64 -DCMAKE_INSTALL_PREFIX="C:/Users/pho/repos/EmotivEpoc/App-XDFStreamer/EXTERNAL/libxdf/build/install" -DBUILD_SHARED_LIBS=ON
+# cmake -S . -B build -A x64 -DCMAKE_INSTALL_PREFIX="C:/Users/pho/repos/EmotivEpoc/LSL_REPOS/App-XDFStreamer/EXTERNAL/libxdf/build/install" -DBUILD_SHARED_LIBS=ON
+cmake -S . -B build -A x64 -DCMAKE_INSTALL_PREFIX="C:/Users/pho/Desktop/LSL Tools/Pho LSL Repos/LSL_REPOS/App-XDFStreamer/EXTERNAL/libxdf/build/install" -DBUILD_SHARED_LIBS=ON
 cmake --build build -j --config Release --target install
 
   Generating Code...
@@ -83,8 +87,13 @@ cmake -S . -B build -A x64 -DLSL_INSTALL_ROOT="C:/Program Files/liblsl/lib/cmake
 * -DXDF_INSTALL_ROOT="C:/Program Files/libxdf/lib/cmake/libxdf"
 
 
-
+C:\Users\pho\Desktop\LSL Tools\Pho LSL Repos\LSL_REPOS\App-XDFStreamer
 cmake -S . -B build -A x64 -DLSL_INSTALL_ROOT="C:/Program Files/liblsl/lib/cmake/LSL" -DXDF_INSTALL_ROOT="C:/Users/pho/repos/EmotivEpoc/App-XDFStreamer/EXTERNAL/libxdf/build/install/lib/cmake/libxdf" -DQt5_DIR="L:\Qt\5.15.2\msvc2019_64\lib\cmake\Qt5" 
+
+
+
+C:/Users/pho/repos/EmotivEpoc/LSL_REPOS/App-XDFStreamer
+cmake -S . -B build -A x64 -DLSL_INSTALL_ROOT="C:/Program Files/liblsl/lib/cmake/LSL" -DXDF_INSTALL_ROOT="C:/Users/pho/repos/EmotivEpoc/LSL_REPOS/App-XDFStreamer/EXTERNAL/libxdf/build/install/lib/cmake/libxdf" -DQt5_DIR="L:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5" 
 
 
 
