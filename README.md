@@ -23,3 +23,70 @@ If the dependencies are not installed to standard system folders then you will n
 
 If you are debugging or not intending to install to the system, then you need to change the install dir:
 * -DCMAKE_INSTALL_PREFIX=${PWD}/build/install
+
+## Pho Build 2025-09-09
+
+```
+mkdir EXTERNAL
+cd .\EXTERNAL\
+
+git clone --recursive https://github.com/xdf-modules/libxdf
+cmake -S . -B build -A x64 -DCMAKE_INSTALL_PREFIX="C:/Users/pho/repos/EmotivEpoc/App-XDFStreamer/EXTERNAL/libxdf/build/install" -DBUILD_SHARED_LIBS=ON
+cmake --build build -j --config Release --target install
+
+  Generating Code...
+  xdf.vcxproj -> C:\Users\pho\repos\EmotivEpoc\App-XDFStreamer\EXTERNAL\libxdf\build\Release\xdf.dll
+  Building Custom Rule C:/Users/pho/repos/EmotivEpoc/App-XDFStreamer/EXTERNAL/libxdf/CMakeLists.txt
+  1>
+  -- Install configuration: "Release"
+  -- Installing: C:/Users/pho/repos/EmotivEpoc/App-XDFStreamer/EXTERNAL/libxdf/build/install/include/xdf.h
+  -- Installing: C:/Users/pho/repos/EmotivEpoc/App-XDFStreamer/EXTERNAL/libxdf/build/install/lib/cmake/libxdf/libxdfTargets.cmake
+  -- Installing: C:/Users/pho/repos/EmotivEpoc/App-XDFStreamer/EXTERNAL/libxdf/build/install/lib/cmake/libxdf/libxdfTargets-release.cmake
+  -- Installing: C:/Users/pho/repos/EmotivEpoc/App-XDFStreamer/EXTERNAL/libxdf/build/install/lib/cmake/libxdf/libxdfConfig.cmake
+
+
+git clone --recursive https://github.com/sccn/liblsl
+cmake -S . -B build -A x64
+cmake --build build -j --config Release --target install
+
+
+  lslver.vcxproj -> C:\Users\pho\repos\EmotivEpoc\App-XDFStreamer\EXTERNAL\liblsl\build\Release\lslver.exe
+  Building Custom Rule C:/Users/pho/repos/EmotivEpoc/App-XDFStreamer/EXTERNAL/liblsl/CMakeLists.txt
+  1>
+  -- Install configuration: "Release"
+  -- Installing: C:/Program Files/liblsl/lib/lsl.lib
+  -- Installing: C:/Program Files/liblsl/bin/lsl.dll
+  -- Installing: C:/Program Files/liblsl/include/lsl_c.h
+  -- Installing: C:/Program Files/liblsl/include/lsl_cpp.h
+  -- Installing: C:/Program Files/liblsl/include/lsl/common.h
+  -- Installing: C:/Program Files/liblsl/include/lsl/inlet.h
+  -- Installing: C:/Program Files/liblsl/include/lsl/outlet.h
+  -- Installing: C:/Program Files/liblsl/include/lsl/resolver.h
+  -- Installing: C:/Program Files/liblsl/include/lsl/streaminfo.h
+  -- Installing: C:/Program Files/liblsl/include/lsl/types.h
+  -- Installing: C:/Program Files/liblsl/include/lsl/xml.h
+  -- Installing: C:/Program Files/liblsl/lib/cmake/LSL/LSLConfig.cmake
+  -- Installing: C:/Program Files/liblsl/lib/cmake/LSL/LSLConfig-release.cmake
+  -- Installing: C:/Program Files/liblsl/lib/cmake/LSL/LSLCMake.cmake
+  -- Installing: C:/Program Files/liblsl/lib/cmake/LSL/LSLConfigVersion.cmake
+  -- Installing: C:/Program Files/liblsl/bin/lslver.exe
+```
+
+
+```
+
+
+cmake -S . -B build -A x64 -DLSL_INSTALL_ROOT="C:/Program Files/liblsl/lib/cmake/LSL" -DXDF_INSTALL_ROOT="C:/Program Files/libxdf/lib/cmake/libxdf" -DQt5_DIR="L:\Qt\5.15.2\msvc2019_64\lib\cmake\Qt5" 
+
+* -DQt5_DIR="L:\Qt\5.15.2\msvc2019_64\lib\cmake\Qt5" 
+* -DLSL_INSTALL_ROOT="C:/Program Files/liblsl/lib/cmake/LSL"
+* -DXDF_INSTALL_ROOT="C:/Program Files/libxdf/lib/cmake/libxdf"
+
+
+
+cmake -S . -B build -A x64 -DLSL_INSTALL_ROOT="C:/Program Files/liblsl/lib/cmake/LSL" -DXDF_INSTALL_ROOT="C:/Users/pho/repos/EmotivEpoc/App-XDFStreamer/EXTERNAL/libxdf/build/install/lib/cmake/libxdf" -DQt5_DIR="L:\Qt\5.15.2\msvc2019_64\lib\cmake\Qt5" 
+
+
+
+
+```

@@ -12,6 +12,9 @@ find_package(LSL REQUIRED
 	PATH_SUFFIXES share/LSL
 )
 
+find_package(pugixml CONFIG REQUIRED)
+target_link_libraries(main PRIVATE pugixml::shared pugixml::pugixml)
+
 find_package(libxdf REQUIRED
 	HINTS ${XDF_INSTALL_ROOT}
 	PATH_SUFFIXES share
