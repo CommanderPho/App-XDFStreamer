@@ -274,7 +274,7 @@ void XdfStreamer::on_checkBoxRandomSignal_stateChanged(int status)
 
 void XdfStreamer::on_toolButtonBrowse_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open XDF File"), "", tr("XDF Files (*.xdf)"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open XDF/FIF File"), "", tr("XDF/FIF Files (*.xdf *.fif);;XDF Files (*.xdf);;FIF Files (*.fif)"));
 
     if (!fileName.isEmpty()) {
         this->clearCache();
