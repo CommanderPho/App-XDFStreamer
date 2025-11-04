@@ -286,9 +286,14 @@ void XdfStreamer::on_checkBoxRandomSignal_stateChanged(int status)
 
 void XdfStreamer::on_toolButtonBrowse_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open XDF/FIF File"), "", tr("XDF/FIF Files (*.xdf *.fif);;XDF Files (*.xdf);;FIF Files (*.fif)"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open XDF File"), "", tr("XDF Files (*.xdf)"));
 
     if (!fileName.isEmpty()) {
+        QFileInfo info(fileName);
+        if (info.suffix().compare("fif", Qt::CaseInsensitive) == 0) {
+            QMessageBox::warning(this, tr("XDF Streamer"), tr("FIF files are not supported. Please select an .xdf file."), QMessageBox::Ok);
+            return;
+        }
         this->clearCache();
         ui->lineEdit->setText(fileName);
         on_pushButtonLoad_clicked();
@@ -298,6 +303,12 @@ void XdfStreamer::on_toolButtonBrowse_clicked()
 void XdfStreamer::on_pushButtonLoad_clicked()
 {
     if (ui->pushButtonLoad->text().compare("Load") == 0) {
+        // Guard against unsupported file types (e.g., .fif)
+        QFileInfo info(ui->lineEdit->text());
+        if (info.suffix().compare("fif", Qt::CaseInsensitive) == 0) {
+            QMessageBox::warning(this, tr("XDF Streamer"), tr("FIF files are not supported. Please select an .xdf file."), QMessageBox::Ok);
+            return;
+        }
         this->xdf = QSharedPointer<Xdf>(new Xdf);
         this->xdf->load_xdf(ui->lineEdit->text().toStdString());
 

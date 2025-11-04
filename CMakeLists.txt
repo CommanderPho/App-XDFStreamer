@@ -41,6 +41,10 @@ add_executable(${PROJECT_NAME} MACOSX_BUNDLE #WIN32
 	XdfStreamer/xdfstreamer.ui
 )
 
+if(WIN32)
+	target_sources(${PROJECT_NAME} PRIVATE res/app.rc)
+endif()
+
 set_target_properties(${PROJECT_NAME}
     PROPERTIES
         CXX_STANDARD 17
