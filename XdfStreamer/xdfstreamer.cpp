@@ -84,6 +84,9 @@ void XdfStreamer::pushXdfData(const int stream_id, QSharedPointer<lsl::stream_ou
     std::vector<double> sample(channelCount);
 
     double starttime = ((double)clock()) / CLOCKS_PER_SEC;
+    
+
+
 
     for (unsigned t = 0; t < xdf->streams[stream_id].time_series.front().size(); t++) {
         {
@@ -96,7 +99,16 @@ void XdfStreamer::pushXdfData(const int stream_id, QSharedPointer<lsl::stream_ou
         std::this_thread::sleep_for(std::chrono::milliseconds(int(1000*(starttime + t*dSamplingInterval - ((double)clock()/CLOCKS_PER_SEC)))));
 
         for (int c = 0; c < channelCount; c++) {
-            sample[c] = this->xdf->streams[stream_id].time_series[c][t];
+            //sample[c] = this->xdf->streams[stream_id].time_series[c][t];
+            auto& value = this->xdf->streams[stream_id].time_series[c][t];
+            std::visit([&](auto&& v) {
+                using T = std::decay_t<decltype(v)>;
+                if constexpr (std::is_arithmetic_v<T>)
+                    sample[c] = static_cast<double>(v);
+                else
+                    sample[c] = std::numeric_limits<double>::quiet_NaN(); // or 0.0, your choice
+                }, value);
+
         }
 
         outlet_ptr->push_sample(sample);
