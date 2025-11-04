@@ -12,8 +12,8 @@ find_package(LSL REQUIRED
 	PATH_SUFFIXES share/LSL
 )
 
-find_package(pugixml CONFIG REQUIRED)
-target_link_libraries(main PRIVATE pugixml::shared pugixml::pugixml)
+# find_package(pugixml CONFIG REQUIRED)
+# target_link_libraries(main PRIVATE pugixml::shared pugixml::pugixml)
 
 find_package(libxdf REQUIRED
 	HINTS ${XDF_INSTALL_ROOT}
@@ -27,6 +27,12 @@ set(CMAKE_AUTORCC ON)
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
 find_package(Threads REQUIRED)
+
+# Include the LSLCMake.cmake file, just for testing.
+# This doesn't do much for us now that we don't use installLSLApp() anymore.
+# include("${LSL_PATH}/LSLCMake.cmake")
+include("EXTERNAL/liblsl/cmake/LSLCMake.cmake")
+
 
 add_executable(${PROJECT_NAME} MACOSX_BUNDLE #WIN32
 	XdfStreamer/main.cpp
