@@ -25,14 +25,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         xdfstreamer.cpp \
-    libxdf/pugixml/pugixml.cpp \
-    libxdf/xdf.cpp
+    ../EXTERNAL/libxdf/pugixml/pugixml.cpp \
+    ../EXTERNAL/libxdf/xdf.cpp
 
 HEADERS += \
         xdfstreamer.h \
-    libxdf/pugixml/pugiconfig.hpp \
-    libxdf/pugixml/pugixml.hpp \
-    libxdf/xdf.h \
+    ../EXTERNAL/libxdf/pugixml/pugiconfig.hpp \
+    ../EXTERNAL/libxdf/pugixml/pugixml.hpp \
+    ../EXTERNAL/libxdf/xdf.h \
     extern/include/lsl_c.h \
     extern/include/lsl_cpp.h
 
@@ -40,11 +40,13 @@ FORMS += \
         xdfstreamer.ui
 
 contains(QT_ARCH, i386) {
-    win32:CONFIG(release, debug|release): LIBS += -L$$PWD/extern/bin/ -lliblsl32
-    else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/extern/bin/ -lliblsl32-debug
+    # 32‑bit: adjust paths/names if you ever build 32‑bit
+    win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../EXTERNAL/liblsl/build/Release -llsl
+    else:win32:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../EXTERNAL/liblsl/build/Debug   -llsl
 } else {
-    CONFIG(release, debug|release): LIBS += -L$$PWD/extern/bin/ -lliblsl64
-    else:CONFIG(debug, debug|release): LIBS += -L$$PWD/extern/bin/ -lliblsl64-debug
+    # 64‑bit (current kit)
+    CONFIG(release, debug|release): LIBS += -L$$PWD/../EXTERNAL/liblsl/build/Release -llsl
+    else:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../EXTERNAL/liblsl/build/Debug   -llsl
 }
 
 #win32:CONFIG(release, debug|release): LIBS += -L$$PWD/extern/bin/ -lliblsl32
@@ -57,3 +59,17 @@ INCLUDEPATH += $$PWD/extern/include
 DEPENDPATH += $$PWD/extern/include
 
 RC_ICONS = xdfstreamer.ico
+
+
+# Headers (for Qt Creator to see pugixml API)
+INCLUDEPATH += $$PWD/../EXTERNAL/pugixml/src
+
+# Link against built pugixml.lib
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../EXTERNAL/pugixml/build/Release -lpugixml
+win32:CONFIG(debug, debug|release):   LIBS += -L$$PWD/../EXTERNAL/pugixml/build/Debug   -lpugixml
+
+# liblsl headers from EXTERNAL (for Qt Creator browsing)
+INCLUDEPATH += $$PWD/../EXTERNAL/liblsl/include
+
+# libxdf headers from EXTERNAL (for Qt Creator browsing)
+INCLUDEPATH += $$PWD/../EXTERNAL/libxdf
