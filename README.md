@@ -24,25 +24,83 @@ If the dependencies are not installed to standard system folders then you will n
 If you are debugging or not intending to install to the system, then you need to change the install dir:
 * -DCMAKE_INSTALL_PREFIX=${PWD}/build/install
 
-## Pho Build 2025-09-09 
-### ESSENTIAL: MUST RUN INSTALL STEPS FOR EACH LIBRARY WITH AN ELEVATED POWERSHELL INSTANCE SO THEY CAN INSTALL TO PROGRAM FILES!
 
+## Pho Encountered Build Errors and Explanations/Fixes
 
 ```ps1
-# cd "C:/Users/pho/Desktop/LSL Tools/Pho LSL Repos/LSL_REPOS/App-XDFStreamer"
-cd "C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer"
+PS C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer> cmake --build build -j --config Debug
+MSBuild version 17.14.23+b0019275e for .NET Framework
+
+  1>Checking Build System
+  Automatic MOC and UIC for target XDFStreamer
+  Building Custom Rule C:/Users/pho/repos/EmotivEpoc/LSL_REPOS/App-XDFStreamer/CMakeLists.txt
+xdf.lib(xdf.obj) : error LNK2038: mismatch detected for '_ITERATOR_DEBUG_LEVEL': value '0' doesn't match value '2' in mocs_compilation_Debug.obj [C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer\build\XDFStreamer.vcxproj]
+xdf.lib(xdf.obj) : error LNK2038: mismatch detected for 'RuntimeLibrary': value 'MD_DynamicRelease' doesn't match value 'MDd_DynamicDebug' in mocs_compilation_Debug.obj [C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer\build\XDFStreamer.vcxproj]
+xdf.lib(pugixml.obj) : error LNK2038: mismatch detected for '_ITERATOR_DEBUG_LEVEL': value '0' doesn't match value '2' in mocs_compilation_Debug.obj [C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer\build\XDFStreamer.vcxproj]
+xdf.lib(pugixml.obj) : error LNK2038: mismatch detected for 'RuntimeLibrary': value 'MD_DynamicRelease' doesn't match value 'MDd_DynamicDebug' in mocs_compilation_Debug.obj [C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer\build\XDFStreamer.vcxproj]
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library [C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer\build\XDFStreamer.vcxproj]
+C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer\build\Debug\XDFStreamer.exe : fatal error LNK1319: 4 mismatches detected [C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer\build\XDFStreamer.vcxproj]
+```
+Happens either from the CLI or when trying to build in Visual Studio GUI -- indicates that the current `--config` (e.g. Debug or Release) doesn't match some previous libraries that have been built.
+
+#### Building `liblsl`
+```ps1
+cd "C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer\EXTERNAL\liblsl"
+cmake --build build -j --config Debug --target install
+cmake --build build -j --config Release --target install
+
+```
+
+
+#### Building `pugixml` is okay
+```ps1
+cd "C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer\EXTERNAL\pugixml"
+cmake --build build -j --config Debug --target install
+cmake --build build -j --config Release
+
+
+```
+
+#### Building `libxdf`
+```ps1
+cd "C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer\EXTERNAL\libxdf"
+cmake -S . -B build -A x64 -DCMAKE_INSTALL_PREFIX="C:/Users/pho/repos/EmotivEpoc/LSL_REPOS/App-XDFStreamer/EXTERNAL/libxdf/build/install" -DBUILD_SHARED_LIBS=ON -DXDF_NO_SYSTEM_PUGIXML=ON
+cmake --build build -j --config Release
+cmake --build build -j --config Debug
+cmake --build build -j --config Release --target install
+cmake --build build -j --config Debug --target install
+```
+#### ERROR:
+```ps1
+MSBuild version 17.14.23+b0019275e for .NET Framework
+
+pugixml.lib(pugixml.obj) : error LNK2038: mismatch detected for '_ITERATOR_DEBUG_LEVEL': value '0' doesn't match value '2' in xdf.obj [C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer\EXTERNAL\libxdf\build\xdf.vcxproj]
+pugixml.lib(pugixml.obj) : error LNK2038: mismatch detected for 'RuntimeLibrary': value 'MD_DynamicRelease' doesn't match value 'MDd_DynamicDebug' in xdf.obj [C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer\EXTERNAL\libxdf\build\xdf.vcxproj]
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library [C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer\EXTERNAL\libxdf\build\xdf.vcxproj]
+C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer\EXTERNAL\libxdf\build\Debug\xdf.dll : fatal error LNK1319: 2 mismatches detected [C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer\EXTERNAL\libxdf\build\xdf.vcxproj]
+```
+Fix: add the `-DXDF_NO_SYSTEM_PUGIXML=ON` argument so that the correct version of PUGIXML is built alongside the `libxdf` and then clear the build folder
+
+
+
+
+### ---------------
+
+
+## Pho Build 2025-09-09
+
+```ps1
+cd "C:/Users/pho/Desktop/LSL Tools/Pho LSL Repos/LSL_REPOS/App-XDFStreamer"
+# cd "C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer"
 
 mkdir EXTERNAL
 cd .\EXTERNAL\
 
+
+## libxdf
 git clone --recursive https://github.com/xdf-modules/libxdf
-
-
-cd libxdf
-cd "C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer\EXTERNAL\libxdf"
-
-cmake -S . -B build -A x64 -DCMAKE_INSTALL_PREFIX="C:/Users/pho/repos/EmotivEpoc/LSL_REPOS/App-XDFStreamer/EXTERNAL/libxdf/build/install" -DBUILD_SHARED_LIBS=ON
-# cmake -S . -B build -A x64 -DCMAKE_INSTALL_PREFIX="C:/Users/pho/Desktop/LSL Tools/Pho LSL Repos/LSL_REPOS/App-XDFStreamer/EXTERNAL/libxdf/build/install" -DBUILD_SHARED_LIBS=ON
+# cmake -S . -B build -A x64 -DCMAKE_INSTALL_PREFIX="C:/Users/pho/repos/EmotivEpoc/LSL_REPOS/App-XDFStreamer/EXTERNAL/libxdf/build/install" -DBUILD_SHARED_LIBS=ON
+cmake -S . -B build -A x64 -DCMAKE_INSTALL_PREFIX="C:/Users/pho/Desktop/LSL Tools/Pho LSL Repos/LSL_REPOS/App-XDFStreamer/EXTERNAL/libxdf/build/install" -DBUILD_SHARED_LIBS=ON -DXDF_NO_SYSTEM_PUGIXML=ON
 cmake --build build -j --config Release --target install
 
   Generating Code...
@@ -55,12 +113,8 @@ cmake --build build -j --config Release --target install
   -- Installing: C:/Users/pho/repos/EmotivEpoc/App-XDFStreamer/EXTERNAL/libxdf/build/install/lib/cmake/libxdf/libxdfTargets-release.cmake
   -- Installing: C:/Users/pho/repos/EmotivEpoc/App-XDFStreamer/EXTERNAL/libxdf/build/install/lib/cmake/libxdf/libxdfConfig.cmake
 
-
-cd ../ # back up to EXTERNAL
+## liblsl
 git clone --recursive https://github.com/sccn/liblsl
-cd liblsl
-
-cd "C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer\EXTERNAL\liblsl"
 cmake -S . -B build -A x64
 cmake --build build -j --config Release --target install
 
@@ -87,59 +141,27 @@ cmake --build build -j --config Release --target install
   -- Installing: C:/Program Files/liblsl/bin/lslver.exe
 ```
 
-# pugxml
-```ps1
-PS C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer\EXTERNAL\pugixml> cmake --build build -j --config Release --target install
-MSBuild version 17.14.23+b0019275e for .NET Framework
-
-  1>Checking Build System
-  Building Custom Rule C:/Users/pho/repos/EmotivEpoc/LSL_REPOS/App-XDFStreamer/EXTERNAL/pugixml/CMakeLists.txt
-  pugixml-static.vcxproj -> C:\Users\pho\repos\EmotivEpoc\LSL_REPOS\App-XDFStreamer\EXTERNAL\pugixml\build\Release\pugixml.lib
-  Building Custom Rule C:/Users/pho/repos/EmotivEpoc/LSL_REPOS/App-XDFStreamer/EXTERNAL/pugixml/CMakeLists.txt
-  1>
-  -- Install configuration: "Release"
-  -- Installing: C:/Program Files/pugixml/lib/pugixml.lib
-  -- Installing: C:/Program Files/pugixml/lib/cmake/pugixml/pugixml-targets.cmake
-  -- Installing: C:/Program Files/pugixml/lib/cmake/pugixml/pugixml-targets-release.cmake
-  -- Installing: C:/Program Files/pugixml/lib/cmake/pugixml/pugixml-config-version.cmake
-  -- Installing: C:/Program Files/pugixml/lib/cmake/pugixml/pugixml-config.cmake
-  -- Installing: C:/Program Files/pugixml/lib/pkgconfig/pugixml.pc
-  -- Installing: C:/Program Files/pugixml/include/pugiconfig.hpp
-  -- Installing: C:/Program Files/pugixml/include/pugixml.hpp
 
 ```
 
 
-# Final
-
-
-```
-
-cd ../../
 cmake -S . -B build -A x64 -DLSL_INSTALL_ROOT="C:/Program Files/liblsl/lib/cmake/LSL" -DXDF_INSTALL_ROOT="C:/Program Files/libxdf/lib/cmake/libxdf" -DQt5_DIR="L:\Qt\5.15.2\msvc2019_64\lib\cmake\Qt5" 
 
 * -DQt5_DIR="L:\Qt\5.15.2\msvc2019_64\lib\cmake\Qt5" 
 * -DLSL_INSTALL_ROOT="C:/Program Files/liblsl/lib/cmake/LSL"
 * -DXDF_INSTALL_ROOT="C:/Program Files/libxdf/lib/cmake/libxdf"
+-Dpugixml_DIR="C:/Users/pho/Desktop/LSL Tools/Pho LSL Repos/LSL_REPOS/App-XDFStreamer/EXTERNAL/libxdf/pugixml"
 
-* -Dpugixml_DIR="C:/Program Files/pugixml/lib/cmake/pugixml"
-
-
-
-C:\Users\pho\Desktop\LSL Tools\Pho LSL Repos\LSL_REPOS\App-XDFStreamer
+cd "C:\Users\pho\Desktop\LSL Tools\Pho LSL Repos\LSL_REPOS\App-XDFStreamer"
 cmake -S . -B build -A x64 -DLSL_INSTALL_ROOT="C:/Program Files/liblsl/lib/cmake/LSL" -DXDF_INSTALL_ROOT="C:/Users/pho/repos/EmotivEpoc/App-XDFStreamer/EXTERNAL/libxdf/build/install/lib/cmake/libxdf" -DQt5_DIR="L:\Qt\5.15.2\msvc2019_64\lib\cmake\Qt5" 
 
 
 
 cd "C:/Users/pho/repos/EmotivEpoc/LSL_REPOS/App-XDFStreamer"
-cmake -S . -B build -A x64 -DLSL_INSTALL_ROOT="C:/Program Files/liblsl/lib/cmake/LSL" -DXDF_INSTALL_ROOT="C:/Users/pho/repos/EmotivEpoc/LSL_REPOS/App-XDFStreamer/EXTERNAL/libxdf/build/install/lib/cmake/libxdf" -DQt5_DIR="L:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5" -Dpugixml_DIR="C:/Program Files/pugixml/lib/cmake/pugixml"
-
-
-
-
-
--Dpugixml_DIR="C:\Users\pho\Desktop\LSL Tools\Pho LSL Repos\LSL_REPOS\App-XDFStreamer\EXTERNAL\pugixml"
-
+cmake -S . -B build -A x64 -DLSL_INSTALL_ROOT="C:/Program Files/liblsl/lib/cmake/LSL" -DXDF_INSTALL_ROOT="C:/Users/pho/repos/EmotivEpoc/LSL_REPOS/App-XDFStreamer/EXTERNAL/libxdf/build/install/lib/cmake/libxdf" -DQt5_DIR="L:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5" 
+<!-- cmake --build build -j --config Release --target install -->
+cmake --build build -j --config Debug
+cmake --build build -j --config Release
 
 
 ```

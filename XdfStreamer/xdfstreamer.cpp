@@ -333,8 +333,9 @@ void XdfStreamer::on_pushButtonLoad_clicked()
             for (size_t k = 0; k < this->xdf->streams.size(); k++) {
                 QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidgetXDF);
                 item->setText(0, "Stream-" + QString::number(k+1));
-                item->setCheckState(0, Qt::Unchecked);
-                item->setDisabled(this->xdf->streams[k].info.channel_format.compare("string") == 0 ? true : false);
+                bool isStringStream = this->xdf->streams[k].info.channel_format.compare("string") == 0;
+                item->setCheckState(0, isStringStream ? Qt::Unchecked : Qt::Checked);
+                item->setDisabled(isStringStream ? true : false);
 
                 QTreeWidgetItem *subItem = new QTreeWidgetItem(item);
                 subItem->setText(0, "Stream Name");
@@ -369,6 +370,15 @@ void XdfStreamer::on_pushButtonLoad_clicked()
                 ui->treeWidgetXDF->addTopLevelItem(item);
             }
             ui->treeWidgetXDF->expandAll();
+            
+            // Set stream_ready if any valid (non-string) streams exist
+            this->stream_ready = false;
+            for (size_t k = 0; k < this->xdf->streams.size(); k++) {
+                if (this->xdf->streams[k].info.channel_format.compare("string") != 0) {
+                    this->stream_ready = true;
+                    break;
+                }
+            }
         }
     }
     else {
